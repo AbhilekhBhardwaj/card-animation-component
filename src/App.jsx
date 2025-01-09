@@ -59,7 +59,8 @@ const App = () => {
   useEffect(() => {
     // Add GSAP animation for background color change when card is clicked
     const body = document.body;
-
+    const selectedCard = cardsRef.current[selected];
+  
     if (selected === 0) {
       gsap.to(body, { backgroundColor: "#ff7070", duration: 1 });
     } else if (selected === 1) {
@@ -69,21 +70,42 @@ const App = () => {
     } else if (selected === 3) {
       gsap.to(body, { backgroundColor: "#f4a308", duration: 1 });
     }
+  
+    // Animate the text size for the selected card
+    if (selectedCard) {
+      const textElement = selectedCard.querySelector("h1");
+      if (textElement) {
+        gsap.to(textElement, { fontSize: "8rem", duration: 1 }); // Grow text size to 8rem
+      }
+    }
+  
+    // Reset the text size for unselected cards
+    cardsRef.current.forEach((card, index) => {
+      if (index !== selected && card) {
+        const textElement = card.querySelector("h1");
+        if (textElement) {
+          gsap.to(textElement, { fontSize: "2rem", duration: 1 }); // Reset text size to 2rem
+        }
+      }
+    });
   }, [selected]);
+  
 
   return (
-    <div className="flex items-center justify-center h-screen">
-      {cards.map((card, key) => (
-        <div
-          ref={addToRef}
-          key={key}
-          className={`h-96 cursor-pointer transition-all ease-in-out duration-[3000ms] ${key === selected ? "w-[550px]" : "w-20"}`}
-          onClick={() => handleClick(key)}
-        >
-          <Card card={card} selected={selected} index={key} />
-        </div>
-      ))}
-    </div>
+    <div className="fixed inset-0 flex items-center justify-center">
+    {cards.map((card, key) => (
+      <div
+        ref={addToRef}
+        key={key}
+        className={`h-96 cursor-pointer transition-all ease-in-out duration-[3000ms] ${
+          key === selected ? "w-[550px]" : "w-20"
+        }`}
+        onClick={() => handleClick(key)}
+      >
+        <Card card={card} selected={selected} index={key} />
+      </div>
+    ))}
+  </div>
   );
 };
 
